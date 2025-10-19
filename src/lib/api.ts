@@ -18,14 +18,18 @@ export const CountryRC = z.object({
     .optional(),
   capitalInfo: z
     .object({
-      latlng: z.tuple([z.number(), z.number()]).optional(),
+      // 👇 Tillåter 1–2 värden i arrayen utan fel
+      latlng: z.array(z.number()).min(1).max(2).optional(),
     })
-    .partial()
     .optional(),
-  latlng: z.tuple([z.number(), z.number()]).optional(),
+  // 👇 Samma sak här – gör den mer flexibel
+  latlng: z.array(z.number()).min(1).max(2).optional(),
 });
 
+
 export type Country = z.infer<typeof CountryRC>; // ✅ Typen du importerar i page.tsx
+
+
 
 // ---- Hämta alla länder ----
 export async function fetchCountries() {
