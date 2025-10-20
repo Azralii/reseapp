@@ -21,10 +21,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <ThemeToggle />
           </header>
 
-          {/* 🧭 Sidinnehåll */}
           <main className="p-6 max-w-6xl mx-auto">{children}</main>
-
-          {/* 👣 Footer */}
+       
           <footer className="mt-10 text-center text-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-800 py-4">
             <p>
               © {new Date().getFullYear()} Reseapp – byggd med Next.js och Tailwind CSS

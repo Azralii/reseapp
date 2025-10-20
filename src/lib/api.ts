@@ -26,10 +26,7 @@ export const CountryRC = z.object({
   latlng: z.array(z.number()).min(1).max(2).optional(),
 });
 
-
 export type Country = z.infer<typeof CountryRC>; // ✅ Typen du importerar i page.tsx
-
-
 
 // ---- Hämta alla länder ----
 export async function fetchCountries() {
@@ -44,20 +41,28 @@ export async function fetchCountries() {
     }
 
     const json = await res.json();
-    const result = z.array(CountryRC).safeParse(json);
 
-    if (!result.success) {
-      console.warn("⚠️ Zod valideringsfel:", result.error.issues.slice(0, 3));
-      return json; // fallback
-    }
+    // ✅ Validera varje land separat
+    const validCountries = json
+      .map((country: any) => {
+        const result = CountryRC.safeParse(country);
+        if (!result.success) {
+          
+         
+          return null;
+        }
+        return result.data;
+      })
+      .filter(Boolean); // tar bort null
 
-    console.log("✅ Länder hämtade:", result.data.length);
-    return result.data;
+    console.log(`✅ Länder hämtade: ${validCountries.length}`);
+    return validCountries;
   } catch (err) {
     console.error("🚨 fetchCountries():", err);
     throw err;
   }
 }
+
 
 // ---- Hämta ett land ----
 export async function fetchCountry(name: string) {
