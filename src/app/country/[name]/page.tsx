@@ -1,9 +1,11 @@
+import Link from "next/link";
+import Image from "next/image";
 import { fetchCountry, fetchWeather, fetchImages, fetchSummary } from "@/lib/api";
 
 export default async function CountryPage(
-  { params }: { params: Promise<{ name: string }> } 
+  { params }: { params: { name: string } }
 ) {
-  const { name } = await params;                    
+  const { name } = params; // ✅ params är inte en Promise längre
   const country = await fetchCountry(name);
 
   const [lat, lon] = country.capitalInfo?.latlng || country.latlng || [0, 0];
@@ -16,13 +18,15 @@ export default async function CountryPage(
 
   return (
     <article className="space-y-6">
-      <a href="/" className="underline">← Tillbaka</a>
+      <Link href="/" className="underline">← Tillbaka</Link>
 
       <header className="flex gap-4 items-center">
-        <img
+        <Image
           src={country.flags.png}
           alt={`Flag of ${country.name.common}`}
-          className="h-20 w-32 rounded"
+          width={200}
+          height={120}
+          className="rounded"
         />
         <div>
           <h1 className="text-2xl font-semibold">{country.name.common}</h1>
@@ -47,7 +51,14 @@ export default async function CountryPage(
         <h2 className="text-lg font-medium mb-2">Bilder</h2>
         <div className="grid grid-cols-3 gap-2">
           {images.results?.slice(0, 3).map((img: any) => (
-            <img key={img.id} src={img.urls.small} alt={img.alt_description || country.name.common} className="rounded" />
+            <Image
+              key={img.id}
+              src={img.urls.small}
+              alt={img.alt_description || country.name.common}
+              width={200}
+              height={150}
+              className="rounded"
+            />
           )) || <p>Inga bilder</p>}
         </div>
       </section>
