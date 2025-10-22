@@ -2,12 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { fetchCountry, fetchWeather, fetchImages, fetchSummary } from "@/lib/api";
 
-export default async function CountryPage({
-  params,
-}: {
-  params: { name: string };
-}) {
-  const { name } = params; // ✅ INGEN await här
+export default async function CountryPage(props: { params: Promise<{ name: string }> }) {
+  const { name } = await props.params; // 👈 vänta in den om den råkar vara en Promise
   const country = await fetchCountry(name);
 
   if (!country) {
@@ -30,13 +26,17 @@ export default async function CountryPage({
 
       <header className="flex gap-4 items-center">
         {country.flags?.png ? (
-          <Image
-            src={country.flags.png}
-            alt={`Flag of ${country.name.common}`}
-            width={200}
-            height={120}
-            className="rounded"
-          />
+ <Image
+  src={country.flags.png}
+  alt={`Flag of ${country.name.common}`}
+  width={200}
+  height={120}
+  style={{ width: "auto", height: "auto" }}
+  className="rounded"
+  priority    // ✅ Lägg till denna rad
+/>
+
+
         ) : (
           <div className="w-32 h-20 bg-gray-300 flex items-center justify-center rounded">
             ❌ Ingen flagga
@@ -72,14 +72,15 @@ export default async function CountryPage({
                 urls: { small: string };
                 alt_description?: string;
               }) => (
-                <Image
-                  key={img.id}
-                  src={img.urls.small}
-                  alt={img.alt_description || country.name.common}
-                  width={200}
-                  height={150}
-                  className="rounded"
-                />
+               <Image
+  key={img.id}
+  src={img.urls.small}
+  alt={img.alt_description || country.name.common}
+  width={200}
+  height={150}
+  style={{ height: "auto" }}   // ✅ lägg till detta också
+  className="rounded"
+/>
               )
             )
           ) : (
