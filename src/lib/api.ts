@@ -44,7 +44,8 @@ export async function fetchCountries() {
 
     // ✅ Validera varje land separat
     const validCountries = json
-      .map((country: any) => {
+      .map((country: Record<string, unknown>) => {
+
         const result = CountryRC.safeParse(country);
         if (!result.success) {
           

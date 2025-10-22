@@ -1,9 +1,13 @@
 "use client";
 
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
 import { fetchCountries, Country } from "@/lib/api";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image"; // 👈 LÄGG TILL DENNA
+
 
 export default function HomePage() {
   const { data, isLoading, isError } = useQuery<Country[]>({
@@ -73,11 +77,14 @@ export default function HomePage() {
             className="border rounded p-2 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 hover:shadow-md transition"
           >
             <Link href={`/country/${encodeURIComponent(country.name.common)}`}>
-              <img
-                src={country.flags?.png}
-                alt={country.flags?.alt || `Flag of ${country.name.common}`}
-                className="h-24 w-full object-cover rounded"
-              />
+            <Image
+  src={country.flags?.png || "/fallback-image.png"}
+  alt={country.flags?.alt || `Flag of ${country.name.common}`}
+  width={400}
+  height={250}
+  className="h-24 w-full object-cover rounded"
+/>
+
               <p className="font-semibold mt-2">{country.name.common}</p>
               <p className="text-sm text-gray-600 dark:text-gray-400">{country.region}</p>
               <p className="text-sm text-gray-500 dark:text-gray-500">

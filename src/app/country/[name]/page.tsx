@@ -50,7 +50,8 @@ export default async function CountryPage(
       <section>
         <h2 className="text-lg font-medium mb-2">Bilder</h2>
         <div className="grid grid-cols-3 gap-2">
-          {images.results?.slice(0, 3).map((img: any) => (
+          {images.results?.slice(0, 3).map((img: { id: string; urls: { small: string }; alt_description?: string }) => (
+
             <Image
               key={img.id}
               src={img.urls.small}
