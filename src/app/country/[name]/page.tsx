@@ -16,11 +16,14 @@ export default async function CountryPage(
     fetchSummary(country.name.common),
   ]);
 
-  return (
-    <article className="space-y-6">
-      <Link href="/" className="underline">← Tillbaka</Link>
+ return (
+  <article className="space-y-6">
+    <Link href="/" className="underline">
+      ← Tillbaka
+    </Link>
 
-      <header className="flex gap-4 items-center">
+    <header className="flex gap-4 items-center">
+      {country.flags?.png ? (
         <Image
           src={country.flags.png}
           alt={`Flag of ${country.name.common}`}
@@ -28,49 +31,75 @@ export default async function CountryPage(
           height={120}
           className="rounded"
         />
-        <div>
-          <h1 className="text-2xl font-semibold">{country.name.common}</h1>
-          <p>{country.region}</p>
+      ) : (
+        <div className="w-32 h-20 bg-gray-300 flex items-center justify-center rounded">
+          ❌ Ingen flagga
         </div>
-      </header>
+      )}
+      <div>
+        <h1 className="text-2xl font-semibold">{country.name.common}</h1>
+        <p>{country.region || "Ingen region"}</p>
+      </div>
+    </header>
 
-      <section>
-        <h2 className="text-lg font-medium mb-2">
-          Väder i {country.capital?.[0] ?? country.name.common}
-        </h2>
-        {weather?.current_weather ? (
-          <p>
-            {weather.current_weather.temperature}°C, vind {weather.current_weather.windspeed} m/s
-          </p>
+    <section>
+      <h2 className="text-lg font-medium mb-2">
+        Väder i {country.capital?.[0] ?? country.name.common}
+      </h2>
+      {weather?.current_weather ? (
+        <p>
+          {weather.current_weather.temperature}°C, vind{" "}
+          {weather.current_weather.windspeed} m/s
+        </p>
+      ) : (
+        <p>Ingen väderdata</p>
+      )}
+    </section>
+
+    <section>
+      <h2 className="text-lg font-medium mb-2">Bilder</h2>
+      <div className="grid grid-cols-3 gap-2">
+        {images.results?.length ? (
+          images.results.slice(0, 3).map(
+            (img: {
+              id: string;
+              urls: { small: string };
+              alt_description?: string;
+            }) => (
+              <Image
+                key={img.id}
+                src={img.urls.small}
+                alt={img.alt_description || country.name.common}
+                width={200}
+                height={150}
+                className="rounded"
+              />
+            )
+          )
         ) : (
-          <p>Ingen väderdata</p>
+          <p>Inga bilder hittades</p>
         )}
-      </section>
+      </div>
+    </section>
 
-      <section>
-        <h2 className="text-lg font-medium mb-2">Bilder</h2>
-        <div className="grid grid-cols-3 gap-2">
-          {images.results?.slice(0, 3).map((img: { id: string; urls: { small: string }; alt_description?: string }) => (
-
-            <Image
-              key={img.id}
-              src={img.urls.small}
-              alt={img.alt_description || country.name.common}
-              width={200}
-              height={150}
-              className="rounded"
-            />
-          )) || <p>Inga bilder</p>}
-        </div>
-      </section>
-
-      <section>
-        <h2 className="text-lg font-medium mb-2">Om landet</h2>
+    <section>
+      <h2 className="text-lg font-medium mb-2">Om landet</h2>
+      {summary?.extract_html ? (
         <div dangerouslySetInnerHTML={{ __html: summary.extract_html }} />
-        <a href={summary.content_urls.desktop.page} target="_blank" className="underline text-sm">
+      ) : (
+        <p>Ingen beskrivning tillgänglig</p>
+      )}
+      {summary?.content_urls?.desktop?.page && (
+        <a
+          href={summary.content_urls.desktop.page}
+          target="_blank"
+          className="underline text-sm"
+        >
           Läs mer på Wikipedia
         </a>
-      </section>
-    </article>
-  );
+      )}
+    </section>
+  </article>
+);
+
 }
