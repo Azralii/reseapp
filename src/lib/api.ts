@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-// ---- Schema för REST Countries ----
+
 export const CountryRC = z.object({
   cca3: z.string().optional(),
   cca2: z.string().optional(),
@@ -18,17 +18,17 @@ export const CountryRC = z.object({
     .optional(),
   capitalInfo: z
     .object({
-      // 👇 Tillåter 1–2 värden i arrayen utan fel
+      
       latlng: z.array(z.number()).min(1).max(2).optional(),
     })
     .optional(),
-  // 👇 Samma sak här – gör den mer flexibel
+  
   latlng: z.array(z.number()).min(1).max(2).optional(),
 });
 
-export type Country = z.infer<typeof CountryRC>; // ✅ Typen du importerar i page.tsx
+export type Country = z.infer<typeof CountryRC>; 
 
-// ---- Hämta alla länder ----
+
 export async function fetchCountries() {
   try {
     const url =
@@ -53,7 +53,7 @@ export async function fetchCountries() {
         }
         return result.data;
       })
-      .filter(Boolean); // tar bort null
+      .filter(Boolean); 
 
     console.log(`✅ Länder hämtade: ${validCountries.length}`);
     return validCountries;
@@ -109,7 +109,7 @@ export async function fetchWeather(lat: number, lon: number) {
   }
 }
 
-// ---- Wikipedia summary ----
+
 export async function fetchSummary(countryName: string) {
   try {
     const res = await fetch(
@@ -123,7 +123,7 @@ export async function fetchSummary(countryName: string) {
   }
 }
 
-// ---- Unsplash bilder ----
+
 export async function fetchImages(query: string) {
   const key = process.env.NEXT_PUBLIC_UNSPLASH_KEY;
   if (!key) {
