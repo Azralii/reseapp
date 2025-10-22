@@ -1,9 +1,9 @@
 import { fetchCountry, fetchWeather, fetchImages, fetchSummary } from "@/lib/api";
 
 export default async function CountryPage(
-  { params }: { params: Promise<{ name: string }> } // 👈 params är en Promise
+  { params }: { params: Promise<{ name: string }> } 
 ) {
-  const { name } = await params;                    // 👈 vänta in params
+  const { name } = await params;                    
   const country = await fetchCountry(name);
 
   const [lat, lon] = country.capitalInfo?.latlng || country.latlng || [0, 0];
