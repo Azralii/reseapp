@@ -2,12 +2,21 @@ import Link from "next/link";
 import Image from "next/image";
 import { fetchCountry, fetchWeather, fetchImages, fetchSummary } from "@/lib/api";
 
-export default async function CountryPage(props: { params: Promise<{ name: string }> }) {
-  const { name } = await props.params; // 👈 vänta in den om den råkar vara en Promise
-  const country = await fetchCountry(name);
+export default async function CountryPage({
+  params,
+}: {
+  params: { code: string };
+}) {
+  const { code } = params;
+  const country = await fetchCountry(code);
 
   if (!country) {
-    return <p>Landet kunde inte hämtas.</p>;
+    return (
+      <main className="p-6">
+        <p>Landet kunde inte hämtas.</p>
+        <Link href="/" className="underline">← Tillbaka</Link>
+      </main>
+    );
   }
 
   const [lat, lon] = country.capitalInfo?.latlng || country.latlng || [0, 0];
@@ -19,24 +28,22 @@ export default async function CountryPage(props: { params: Promise<{ name: strin
   ]);
 
   return (
-    <article className="space-y-6">
+    <article className="space-y-6 p-6">
       <Link href="/" className="underline">
         ← Tillbaka
       </Link>
 
       <header className="flex gap-4 items-center">
         {country.flags?.png ? (
- <Image
-  src={country.flags.png}
-  alt={`Flag of ${country.name.common}`}
-  width={200}
-  height={120}
-  style={{ width: "auto", height: "auto" }}
-  className="rounded"
-  priority    // ✅ Lägg till denna rad
-/>
-
-
+          <Image
+            src={country.flags.png}
+            alt={`Flag of ${country.name.common}`}
+            width={200}
+            height={120}
+            style={{ height: "auto" }}
+            className="rounded"
+            priority
+          />
         ) : (
           <div className="w-32 h-20 bg-gray-300 flex items-center justify-center rounded">
             ❌ Ingen flagga
@@ -72,15 +79,15 @@ export default async function CountryPage(props: { params: Promise<{ name: strin
                 urls: { small: string };
                 alt_description?: string;
               }) => (
-               <Image
-  key={img.id}
-  src={img.urls.small}
-  alt={img.alt_description || country.name.common}
-  width={200}
-  height={150}
-  style={{ height: "auto" }}   // ✅ lägg till detta också
-  className="rounded"
-/>
+                <Image
+                  key={img.id}
+                  src={img.urls.small}
+                  alt={img.alt_description || country.name.common}
+                  width={200}
+                  height={150}
+                  style={{ height: "auto" }}
+                  className="rounded"
+                />
               )
             )
           ) : (
