@@ -138,8 +138,8 @@ export async function fetchImages(query: string) {
   const key = process.env.NEXT_PUBLIC_UNSPLASH_KEY;
 
   if (!key) {
-    console.warn("⚠️ Ingen Unsplash-nyckel hittades i .env.local");
-    return { results: [] };
+    console.warn("⚠️ Ingen Unsplash-nyckel hittades i miljön — hoppar över bildhämtning.");
+    return { results: [] }; // fallback så build inte kraschar
   }
 
   try {
@@ -149,10 +149,15 @@ export async function fetchImages(query: string) {
       )}&per_page=3&client_id=${key}`
     );
 
-    if (!res.ok) throw new Error("Kunde inte hämta bilder");
+    if (!res.ok) {
+      console.warn(`⚠️ Unsplash-förfrågan misslyckades (${res.status})`);
+      return { results: [] };
+    }
+
     return await res.json();
   } catch (err) {
     console.error("🚨 fetchImages():", err);
-    return { results: [] };
+    return { results: [] }; // returnera tom array för säkerhets skull
   }
 }
+
